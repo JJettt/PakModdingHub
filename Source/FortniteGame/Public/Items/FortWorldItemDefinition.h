@@ -1,18 +1,25 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2023 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeSet.h"
 #include "Items/FortItemDefinition.h"
-#include "Sound/SoundBase.h"
+#include "Styling/SlateBrush.h"
+#include "GameplayTagContainer.h"
+#include "Engine/DataAsset.h"
+#include "GameplayTags.h"
+#include "Engine/StaticMesh.h"
 #include "Engine/SkeletalMesh.h"
+#include "Sound/SoundBase.h"
+#include "FortniteGame.h"
 #include "FortWorldItemDefinition.generated.h"
 
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FFortPickupTagTestContainer
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -25,7 +32,7 @@ public:
 USTRUCT(BlueprintType)
 struct FFortPickupRestrictionLists
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -35,196 +42,243 @@ public:
 		FFortPickupTagTestContainer Blacklist;
 };
 
-UENUM()
-enum class EWorldItemDropBehavior : uint8
-{
-	DropAsPickup                   = 0,
-	DestroyOnDrop                  = 1,
-	DropAsPickupDestroyOnEmpty     = 2,
-	DropAsPickupEvenWhenEmpty      = 3,
-	EWorldItemDropBehavior_MAX     = 4
-};
 
-UCLASS(BlueprintType)
+
+UCLASS()
 class FORTNITEGAME_API UFortWorldItemDefinition : public UFortItemDefinition
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Tags|Gameplay")
 		FGameplayTagContainer RequiredEquipTags;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		TArray<FFortPickupRestrictionLists> PickupRestrictionListEntry;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Tags|Gameplay")
+		FGameplayTagContainer OverrideAutoEquipTags;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Stats")
+		EFortReplicatedStat AccumulatingStatType;
+
+	// doesn't exist in 9.10
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite) 
+	//	TArray<FFortPickupRestrictionLists> PickupRestrictionListEntry; 
+
+	// Determines what an item does once dropped by a player.
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
 		EWorldItemDropBehavior DropBehavior;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
 		bool bIgnoreRespawningForDroppingAsPickup;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bCanAutoEquipByClass = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bPersistInInventoryWhenFinalStackEmpty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bPersistInInventoryWhenFinalStackEmpty = false;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
+	// Used to determine if you can select an item in the quickbar.
+	// Leave true if you want to equip the item traditionally.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bSupportsQuickbarFocus = true;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
-		bool bSupportsQuickbarFocusForGamepadOnly;
+	// Used to determine if you can select an item in the quickbar, specifically for controller. 
+	// Leave true if you want to equip the item traditionally on controller.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bSupportsQuickbarFocusForGamepadOnly = true;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
-		bool bShouldActivateWhenFocused;
+	// Related to when the item is selected in the quickbar, unsure what it's used for.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bShouldActivateWhenFocused = true;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
-		bool bForceFocusWhenAdded;
+	// Forces the item to be focused when added to the quickbar.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bForceFocusWhenAdded = false;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
-		bool bForceIntoOverflow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bForceIntoOverflow = true;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
-		bool bForceStayInOverflow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bForceStayInOverflow = true;
 
-	UPROPERTY(EditAnywhere, Category = "Display")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
 		bool bDropCurrentItemOnOverflow = true;
+		
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
+		bool bHasDisintegrationValue = true; 
 
-	UPROPERTY(EditAnywhere, Category = "Display")
+	// Should this item show description? true = yes, false = no.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bShouldShowItemToast = true;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bShowDirectionalArrowWhenFarOff = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	// Determines if an item can be dropped, or if it is locked to your inventory.
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
 		bool bCanBeDropped = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bCanBeReplacedByPickup= true;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info")
+		bool bCanBeReplacedByPickup = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bItemCanBeStolen = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	// Determines if an item can be put into Storm Shield Storage.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		bool bCanBeDepositedInStorageVault = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	// Determines if an item has durability, true by default.
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Durability")
 		bool bItemHasDurability = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bAllowedToBeLockedInInventory;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bAllowedToBeLockedInInventory = true;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
-		bool bOverridePickupMeshTransform;
+	//Overrides the dimensions of the Pickup Mesh
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info")
+		bool bOverridePickupMeshTransform = true;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
-		bool bAlwaysCountForCollectionQuest;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bDisplayPlayerNameForInventoryActor = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bDropOnDeath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bDisplayHealthForInventoryActor = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bDropOnLogout;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bDisplayShieldForInventoryActor = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bDropOnDBNO;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		bool bAlwaysCountForCollectionQuest = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		bool bDoesNotNeedSourceSchematic;
+	// Should item drop when holder dies?
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
+		bool bDropOnDeath = true;
 
-	UPROPERTY(EditAnywhere)
-		bool bUsesGoverningTags;
+	// Should item drop when holder logs out?
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
+		bool bDropOnLogout = true;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		int DropCount = -1;
+	// Should item drop when holder gets knocked?
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
+		bool bDropOnDBNO = true;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
-		float MiniMapViewableDistance = 8000;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Schematics")
+		bool bDoesNotNeedSourceSchematic = true;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
+	//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+	//		bool bUsesGoverningTags; //doesn't exist in 9.10
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info")
+		int DropCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
+		float MiniMapViewableDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		FSlateBrush MiniMapIconBrush;
 
-	UPROPERTY(EditAnywhere, Category = "OwnerPickupText")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info")
 		FText OwnerPickupText;
 
-	UPROPERTY(EditAnywhere, Category = "Loot Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info")
 		FDataTableCategoryHandle LootLevelData;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info")
 		FTransform PickupMeshTransform;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
-		bool bIsPickupASpecialActor;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item|Tags")
+		FGameplayTag SpecialActorBaseTag;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item|Tags")
 		FGameplayTag SpecialActorPickupTag;
 
-	//UPROPERTY(EditAnywhere)
-	//	TArray<FSpecialActorSingleStatData> SpecialActorPickupStatList;
+	//	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item|Stats Lists")
+	//		TArray<FSpecialActorSingleStatData> SpecialActorPickupStatList;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
+	//	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item|Stats Lists")
+	//		TArray<FSpecialActorSingleStatData> SpecialActorInventoryStatList;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item")
 		FName PickupSpecialActorUniqueID;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
-		FSlateBrush PickupMinimapIconBrush;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Special Actor Item|Tags")
+		FGameplayTag SpecialActorInventoryTag;
 
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
-		FVector2D PickupMinimapIconScale;
-
-	UPROPERTY(EditAnywhere, Category = "Special Actor")
-		FSlateBrush PickupCompassIconBrush;
-
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info|Despawning")
 		FScalableFloat PickupDespawnTime;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info|Despawning")
 		FScalableFloat InStormPickupDespawnTime;
 
-	UPROPERTY(EditAnywhere, Category = "Functionality")
-		FScalableFloat NetworkCullDistanceOverride;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info|Culling")
+		FScalableFloat NetworkCullDistanceOverride; // idk what this would do
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Minimap")
+		FSlateBrush PickupMinimapIconBrush;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Minimap")
+		FVector2D PickupMinimapIconScale;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Compass")
+		FSlateBrush PickupCompassIconBrush;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Compass")
+		FVector2D PickupCompassIconScale;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Minimap")
+		FSlateBrush InventoryMinimapIconBrush;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Minimap")
+		FVector2D InventoryMinimapIconScale;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Compass")
+		FSlateBrush InventoryCompassIconBrush;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Compass")
+		FVector2D InventoryCompassIconScale;
+
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Slots")
+		uint8 NumberOfSlotsToTake;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Item Pickup Info")
 		TSoftObjectPtr<UStaticMesh> PickupStaticMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Item Pickup Info")
 		TSoftObjectPtr<USkeletalMesh> PickupSkeletalMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Pickup Visuals")
-		UClass* PickupEffectOverride;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "World Item Info|Item Pickup Info")
+		TSoftClassPtr<AActor> PickupEffectOverride;
 
-	UPROPERTY(EditAnywhere, Category = "Sounds")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info|Sounds")
 		TSoftObjectPtr<USoundBase> PickupSound;
 
-	UPROPERTY(EditAnywhere, Category = "Sounds")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Pickup Info|Sounds")
 		TSoftObjectPtr<USoundBase> PickupByNearbyPawnSound;
 
-	UPROPERTY(EditAnywhere, Category = "Sounds")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info|Sounds")
 		TSoftObjectPtr<USoundBase> DropSound;
 
-	UPROPERTY(EditAnywhere, Category = "Sounds")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Item Drop Info|Sounds")
 		TSoftObjectPtr<USoundBase> DroppedLoopSound;
 
-	UPROPERTY(EditAnywhere, Category = "Sounds")
-		TSoftObjectPtr<USoundBase> LandedSound;
-
-	UPROPERTY(EditAnywhere, Category = "Disassembly")
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Durability")
 		FDataTableRowHandle DisassembleRecipe;
 
-	UPROPERTY(EditAnywhere, Category = "Disassembly")
-		float DisassembleDurabilityDegradeMinLootPercent = 0.2;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Durability")
+		float DisassembleDurabilityDegradeMinLootPercent; 
 
-	UPROPERTY(EditAnywhere, Category = "Disassembly")
-		float DisassembleDurabilityDegradeMaxLootPercent = 0.8;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Durability")
+		float DisassembleDurabilityDegradeMaxLootPercent;
 
-	UPROPERTY(EditAnywhere)
-		int PreferredQuickbarSlot = -1;
+	UPROPERTY(EditAnywhere, Category = "World Item Info")
+		int32 FabricationValueOverride;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
-		int MinLevel = 1;
+	UPROPERTY(EditAnywhere, Category = "World Item Info|Slots")
+		int32 PreferredQuickbarSlot;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
-		int MaxLevel = -1;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Level")
+	   int32 MinLevel;                                       
 
-	UPROPERTY(EditAnywhere, Category = "Inventory")
-		uint8 NumberOfSlotsToTake = 1;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Level")
+	   int32 MaxLevel;
 };

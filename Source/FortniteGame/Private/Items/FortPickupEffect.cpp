@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2023 Epic Games, Inc. All Rights Reserved.
 
 #include "FortPickupEffect.h"
 #include "Engine/StaticMesh.h"

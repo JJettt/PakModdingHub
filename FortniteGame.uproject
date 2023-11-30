@@ -1,9 +1,14 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{2F6FDDFE-4FA4-879D-1635-4CAA3238A74D}",
+	"EngineAssociation": "{67F90638-4409-AD39-50A9-6FA34AB1D141}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
+		{
+			"Name": "FortniteEngineLoadingScreen",
+			"Type": "ClientOnly",
+			"LoadingPhase": "PreLoadingScreen"
+		},
 		{
 			"Name": "FortniteGame",
 			"Type": "Runtime",
@@ -40,7 +45,173 @@
 	],
 	"Plugins": [
 		{
+			"Name": "ActorLayerUtilities",
+			"Enabled": false
+		},
+		{
+			"Name": "ActorSequence",
+			"Enabled": false
+		},
+		{
 			"Name": "AESHandlerComponent",
+			"Enabled": true
+		},
+		{
+			"Name": "JsonAsAsset",
+			"Enabled": true,
+			"MarketplaceURL": "https://github.com/Tectors/JsonAsAsset"
+		},
+		{
+			"Name": "CableComponent",
+			"Enabled": true
+		},
+		{
+			"Name": "AnimationSharing",
+			"Enabled": true
+		},
+		{
+			"Name": "MeshNetwork",
+			"Enabled": true
+		},
+		{
+			"Name": "EpicCMS",
+			"Enabled": true
+		},
+		{
+			"Name": "EpicCMSUIFramework",
+			"Enabled": true
+		},
+		{
+			"Name": "SpeechGraphics",
+			"Enabled": true
+		},
+		{
+			"Name": "EpicArtPipeline",
+			"Enabled": true
+		},
+		{
+			"Name": "IbmStreamingMedia",
+			"Enabled": true
+		},
+		{
+			"Name": "EpicGameplayStats",
+			"Enabled": true
+		},
+		{
+			"Name": "Oodle",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemNull",
+			"Enabled": true
+		},
+		{
+			"Name": "FortInstallBundleManager",
+			"Enabled": true
+		},
+		{
+			"Name": "FortniteEarlyStartupPatcher",
+			"Enabled": true
+		},
+		{
+			"Name": "Crashlytics",
+			"Enabled": true
+		},
+		{
+			"Name": "RHIPanicSentinel",
+			"Enabled": true
+		},
+		{
+			"Name": "LiveStreamVoice",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineFramework",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineGameplayFramework",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemLiveServer",
+			"Enabled": true,
+			"Optional": true
+		},
+		{
+			"Name": "OnlineSubsystemPS4Server",
+			"Enabled": true,
+			"Optional": true
+		},
+		{
+			"Name": "OnlineSubsystemTwitch",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "PurchaseFlow",
+			"Enabled": true
+		},
+		{
+			"Name": "WinDualShock",
+			"Enabled": true,
+			"Optional": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "BackChannel",
+			"Enabled": true,
+			"WhitelistTargets": [
+				"Editor"
+			]
+		},
+		{
+			"Name": "BlueprintMaterialTextureNodes",
+			"Enabled": true
+		},
+		{
+			"Name": "FunctionalTestingEditor",
+			"Enabled": true
+		},
+		{
+			"Name": "LiveLink",
+			"Enabled": true
+		},
+		{
+			"Name": "LiveLinkCurveDebugUI",
+			"Enabled": true
+		},
+		{
+			"Name": "PhysXVehicles",
+			"Enabled": true
+		},
+		{
+			"Name": "TimeSynth",
+			"Enabled": true
+		},
+		{
+			"Name": "FacialAnimSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "Synthesis",
+			"Enabled": true
+		},
+		{
+			"Name": "Gauntlet",
+			"Enabled": true
+		},
+		{
+			"Name": "ImagePlate",
 			"Enabled": true
 		},
 		{
@@ -68,6 +239,22 @@
 		},
 		{
 			"Name": "Niagara",
+			"Enabled": true
+		},
+		{
+			"Name": "AnimationBudgetAllocator",
+			"Enabled": true
+		},
+		{
+			"Name": "ControlRig",
+			"Enabled": true
+		},
+		{
+			"Name": "BlueprintContext",
+			"Enabled": true
+		},
+		{
+			"Name": "MatchmakingService",
 			"Enabled": true
 		}
 	]
